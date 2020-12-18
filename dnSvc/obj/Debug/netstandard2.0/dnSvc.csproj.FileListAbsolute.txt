@@ -6,4 +6,3 @@ C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.AssemblyInfoInp
 C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.AssemblyInfo.cs
 C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.dll
 C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.pdb
-C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.csprojAssemblyReference.cache

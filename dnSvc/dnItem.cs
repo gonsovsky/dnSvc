@@ -21,7 +21,11 @@ namespace dnSvc
 
         public DateTime TimeStarted { get; set; }
 
+        public DateTime TimeEnded { get; set; }
+
         public TimeSpan TimeTaken { get; set; }
+
+        public TimeSpan CurrentTime => DateTime.Now.Subtract(TimeStarted);
 
         public int Index { get; set; }
 
@@ -40,6 +44,8 @@ namespace dnSvc
                 Busy = false;
                 Done = true;
             }
+            TimeEnded = DateTime.Now;
+            TimeTaken = DateTime.Now.Subtract(TimeEnded);
         }
 
         public void Complete()

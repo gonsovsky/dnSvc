@@ -21,6 +21,9 @@ namespace dnSvc
         public int DoneSegments =>
             Segments.Count(x => x.Done);
 
+        public IEnumerable<DnSegment> DoneSegmentsCol =>
+            Segments.Where(x => x.Done).OrderBy(x => x.TimeEnded);
+
         public int DoneSize =>
             Segments.Where(x => x.Done).Sum(y => y.Size);
         
@@ -103,5 +106,21 @@ namespace dnSvc
             }
         }
 
+        public string Speed
+        {
+            get
+            {
+                double v = 0;
+                var last = DoneSegmentsCol.Skip(Math.Max(0, DoneSegmentsCol.Count() - 2)).ToArray();
+                if (last.Count() >= 1)
+                {
+                    var s = last.Last().TimeEnded.Subtract(last.First().TimeStarted).TotalSeconds;
+                    v = last.Sum(x => x.Size);  
+                    if (s != 0)
+                        v = (double) v / s / 1024;
+                }
+                return $"{Math.Round(v, 2)} kb/s";
+            }
+        }
     }
 }

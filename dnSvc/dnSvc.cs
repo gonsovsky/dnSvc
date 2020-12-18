@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace dnSvc
 {
@@ -25,7 +26,7 @@ namespace dnSvc
                 ).Take(DnConf.Parallels);
 
         private IEnumerable<DnTask> CompletedTasks =>
-            Tasks.Where(x => !x.Segments.Exists(y => y.Done == false));
+            Tasks.Where(x => x.Segments.Count > 0 && !x.Segments.Exists(y => y.Done == false));
 
         public int Percent
         {
@@ -66,6 +67,11 @@ namespace dnSvc
                 {
                     task.Complete();
                     task.Delivered = true;
+                }
+
+                if (Tasks.Count() == Tasks.Count(x=> x.Delivered==true))
+                {
+                    return;
                 }
 
 
