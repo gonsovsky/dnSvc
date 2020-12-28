@@ -1,0 +1,4 @@
+C:\@trottle\DownloadService\dnSvc\obj\Debug\net45\dnSvc.csprojAssemblyReference.cache
+C:\@trottle\DownloadService\dnSvc\obj\Debug\net45\dnSvc.csproj.CoreCompileInputs.cache
+C:\@trottle\DownloadService\dnSvc\obj\Debug\net45\dnSvc.AssemblyInfoInputs.cache
+C:\@trottle\DownloadService\dnSvc\obj\Debug\net45\dnSvc.AssemblyInfo.cs

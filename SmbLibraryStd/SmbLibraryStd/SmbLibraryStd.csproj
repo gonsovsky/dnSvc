@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MSBuildTasks" Version="1.5.0.235" />
+  </ItemGroup>
+  <Import Project="..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets" Condition="Exists('..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" />
+  <Target Name="Version" BeforeTargets="Build">
+    <!--
+      Generate a new version number. The major, minor and build parts of the
+      number are listed out explicitly here, and will point to the version of
+      upstream that this version is based on. The Revision number will
+      auto-increment on each build.
+
+      As of right now, I am not including version.txt in version control, since
+      it would only create merge conflicts.
+    -->
+    <Version MajorType="None" MinorType="None" BuildType="None" RevisionType="BuildIncrement" Major="1" Minor="3" Build="4" VersionFile="version.txt">
+      <Output TaskParameter="Major" PropertyName="Major" />
+      <Output TaskParameter="Minor" PropertyName="Minor" />
+      <Output TaskParameter="Build" PropertyName="Build" />
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </Version>
+    <!--
+      Ensure that the Properties directory exists, since clean checkouts
+      won't contain it.
+    -->
+    <MakeDir Directories="$(MSBuildProjectDirectory)\Properties" Condition="!Exists('$(MSBuildProjectDirectory)\Properties')" />
+    <!--
+      Write out an AssemblyInfo.cs containing the above version string
+    -->
+    <AssemblyInfo CodeLanguage="CS" OutputFile="$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs" AssemblyTitle="SmbLibraryStd" AssemblyDescription="Free, Open Source, User-Mode SMB 1.0/CIFS, SMB 2.0 and SMB 2.1 Server Library" AssemblyCompany="SmbLibraryStd Authors. See https://github.com/j4m3z0r/SmbLibraryStd/Authors.md" AssemblyProduct="SmbLibraryStd" AssemblyCopyright="SmbLibraryStd Authors. See https://github.com/j4m3z0r/SmbLibraryStd/Authors.md" ComVisible="false" AssemblyVersion="$(Major).$(Minor).$(Build).$(Revision)" AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)" />
+  </Target>
+
+</Project>

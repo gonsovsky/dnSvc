@@ -1,0 +1,14 @@
+C:\@trottle\DownloadService\sambacli\bin\Debug\netcoreapp2.1\sambacli.deps.json
+C:\@trottle\DownloadService\sambacli\bin\Debug\netcoreapp2.1\sambacli.runtimeconfig.json
+C:\@trottle\DownloadService\sambacli\bin\Debug\netcoreapp2.1\sambacli.runtimeconfig.dev.json
+C:\@trottle\DownloadService\sambacli\bin\Debug\netcoreapp2.1\sambacli.dll
+C:\@trottle\DownloadService\sambacli\bin\Debug\netcoreapp2.1\sambacli.pdb
+C:\@trottle\DownloadService\sambacli\bin\Debug\netcoreapp2.1\SharpCifs.Std.dll
+C:\@trottle\DownloadService\sambacli\bin\Debug\netcoreapp2.1\SharpCifs.Std.pdb
+C:\@trottle\DownloadService\sambacli\obj\Debug\netcoreapp2.1\sambacli.csprojAssemblyReference.cache
+C:\@trottle\DownloadService\sambacli\obj\Debug\netcoreapp2.1\sambacli.csproj.CoreCompileInputs.cache
+C:\@trottle\DownloadService\sambacli\obj\Debug\netcoreapp2.1\sambacli.AssemblyInfoInputs.cache
+C:\@trottle\DownloadService\sambacli\obj\Debug\netcoreapp2.1\sambacli.AssemblyInfo.cs
+C:\@trottle\DownloadService\sambacli\obj\Debug\netcoreapp2.1\sambacli.csproj.CopyComplete
+C:\@trottle\DownloadService\sambacli\obj\Debug\netcoreapp2.1\sambacli.dll
+C:\@trottle\DownloadService\sambacli\obj\Debug\netcoreapp2.1\sambacli.pdb

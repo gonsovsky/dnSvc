@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>SmbLibraryStd</id>
+    <version>$version$</version>
+    <authors>James Gregory</authors>
+    <owners>jgregory</owners>
+    <licenseUrl>https://raw.githubusercontent.com/j4m3z0r/SmbLibraryStd/master/COPYING</licenseUrl>
+    <projectUrl>https://github.com/j4m3z0r/SmbLibraryStd</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Free, Open Source, User-Mode SMB 1.0/CIFS, SMB 2.0 and SMB 2.1 Server Library</description>
+    <copyright>See https://github.com/j4m3z0r/SmbLibraryStd/blob/master/Authors.md</copyright>
+    <tags>smb server cifs</tags>
+  </metadata>
+  <files>
+    <file src="bin\Release\netstandard2.0\SmbLibraryStd.dll" target="lib\netstandard2.0\SmbLibraryStd.dll" />
+  </files>
+</package>
