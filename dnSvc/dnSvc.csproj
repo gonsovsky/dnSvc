@@ -2,19 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <Title>for NetStandard 2.0</Title>
-    <DefineConstants>NET4_5;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Title>for .NET Framework 4.0</Title>
-    <DefineConstants>NET4_0</DefineConstants>
-  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="SharpCifs.Std" Version="0.2.13" />
+  </ItemGroup>
 
 
 </Project>

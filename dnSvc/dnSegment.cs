@@ -18,7 +18,7 @@ namespace dnSvc
             set => Size = value - Begin;
         }
 
-        public DnSegment(DnTask task, int index) : base(task.Token)
+        public DnSegment(DnTask task, int index) : base(task.Token, task.FromUri)
         {
             Parent = task;
             Index = index;
@@ -26,21 +26,10 @@ namespace dnSvc
 
         protected override void StartAction()
         {
-            if (!(WebRequest.Create(Parent.FromUri) is HttpWebRequest httpWebRequest))
-                throw new ApplicationException($"Segment {Index} for {Parent.FromUri} error");
-            httpWebRequest.Method = "GET";
-            httpWebRequest.AddRange(Begin, End);
-            using (var httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)
+            using (var fileStream =
+                new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
-                using (var fileStream =
-                    new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
-                {
-                    if (httpWebResponse != null)
-                    {
-                        var resp = httpWebResponse.GetResponseStream();
-                        resp?.CopyTo(fileStream);
-                    }
-                }
+                Transport.Body(fileStream, Begin, End);
             }
         }
 

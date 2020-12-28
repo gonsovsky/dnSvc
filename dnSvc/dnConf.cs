@@ -10,7 +10,7 @@ namespace dnSvc
         [Category("Segment")]
         public int Delay { get; set; } = 50;
         [Category("Segment")]
-        public int SegmentSize { get; set; } = (int)(0.5 * 1048576);
+        public int SegmentSize { get; set; } = (int)(0.5 * 1048576) * 10;
 
         [Category("Dir")]
         public string Dir  { get; set; } = @"C:\temp";

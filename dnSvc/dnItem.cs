@@ -1,12 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace dnSvc
 {
-    public abstract class DnItem: INotifyPropertyChanged
+    public abstract class DnItem
     {
+        public Uri FromUri { get; set; }
+
+        public DnTransport Transport;
+
         public CancellationToken Token;
 
         public string Name { get; set; }
@@ -25,9 +30,15 @@ namespace dnSvc
 
         public TimeSpan TimeTaken { get; set; }
 
-        public TimeSpan CurrentTime => DateTime.Now.Subtract(TimeStarted);
-
         public int Index { get; set; }
+
+        protected DnItem(CancellationToken token, Uri fromUri)
+        {
+            Token = token;
+            FromUri = fromUri;
+            Name = fromUri.Segments.Last();
+            Transport = DnTransport.Make(FromUri);
+        }
 
         public void Start()
         {
@@ -45,7 +56,7 @@ namespace dnSvc
                 Done = true;
             }
             TimeEnded = DateTime.Now;
-            TimeTaken = DateTime.Now.Subtract(TimeEnded);
+            TimeTaken = TimeStarted.Subtract(TimeEnded);
         }
 
         public void Complete()
@@ -58,17 +69,5 @@ namespace dnSvc
         protected abstract void CompleteAction();
 
         public abstract string FileName { get; }
-
-        protected DnItem(CancellationToken token)
-        {
-            Token = token;  
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void RaisePropertyChangedEvent(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

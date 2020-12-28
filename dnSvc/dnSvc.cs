@@ -60,8 +60,23 @@ namespace dnSvc
         {
             while (!this._token.IsCancellationRequested)
             {
-                foreach (var dnItem in UnstartedTasksAndSegments)
-                    dnItem.Start();
+                var e = UnstartedTasksAndSegments.ToList();
+                if (e.Any())
+                {
+                    if (DnConf.Parallels==1)
+                        e.First().Start();
+                    else
+                    {
+                        e = e.Take(Math.Min(DnConf.Parallels, e.Count)).ToList();
+                        var tl = new List<Task>();
+                        foreach (var x in e)
+                        {
+                            var t = Task.Factory.StartNew(x.Start);
+                            tl.Add(t);
+                        }
+                        Task.WaitAll(tl.ToArray());
+                    }
+                }
 
                 foreach (var task in CompletedTasks.Where(x => x.Delivered == false))
                 {
@@ -141,7 +156,9 @@ namespace dnSvc
             var lines = File.ReadAllLines(aFile);
             foreach (var line in lines)
             {
-                BeginDownload(new Uri(line));
+                if (line.Trim().StartsWith("#"))
+                    continue;
+                BeginDownload(new Uri(line.Trim()));
             }
         }
 

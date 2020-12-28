@@ -5,3 +5,4 @@ C:\@trottle\DownloadService\dnSvc\obj\Debug\net40\dnSvc.AssemblyInfoInputs.cache
 C:\@trottle\DownloadService\dnSvc\obj\Debug\net40\dnSvc.AssemblyInfo.cs
 C:\@trottle\DownloadService\dnSvc\obj\Debug\net40\dnSvc.dll
 C:\@trottle\DownloadService\dnSvc\obj\Debug\net40\dnSvc.pdb
+C:\@trottle\DownloadService\dnSvc\obj\Debug\net40\dnSvc.csprojAssemblyReference.cache

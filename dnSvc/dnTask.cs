@@ -11,8 +11,6 @@ namespace dnSvc
     {
         public FileStream DestStream;
 
-        public string FromUri { get; set; }
-
         public List<DnSegment> Segments = new List<DnSegment>();
 
         public int TotalSegments =>
@@ -29,21 +27,15 @@ namespace dnSvc
         
         public bool Delivered { get; set; }
 
-        public DnTask(CancellationToken token, Uri fromUri): base(token)
+        public DnTask(CancellationToken token, Uri fromUri): base(token, fromUri)
         {
-            this.FromUri = fromUri.ToString();
-            this.Name = fromUri.Segments.Last();
+       
         }
 
         protected override void StartAction()
         {
-            WebRequest webRequest = WebRequest.Create(FromUri);
-            webRequest.Method = "HEAD";
-            using (var webResponse = webRequest.GetResponse())
-            {
-                var responseLength = long.Parse(webResponse.Headers.Get("Content-Length"));
-                Size = (int) responseLength;
-            }
+            var head = Transport.Head();
+            Size = head.Size;
 
             Segments = new List<DnSegment>();
 
@@ -120,6 +112,20 @@ namespace dnSvc
                         v = (double) v / s / 1024;
                 }
                 return $"{Math.Round(v, 2)} kb/s";
+            }
+        }
+
+        public int CurrentTime
+        {
+            get
+            {
+                if (DoneSegmentsCol.Any())
+                {
+                    var x = DoneSegmentsCol.Last().TimeEnded;
+                    return (int)x.Subtract(TimeStarted).TotalSeconds;
+                }
+
+                return 0;
             }
         }
     }
