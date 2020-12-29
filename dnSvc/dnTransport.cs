@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace dnSvc
 {
@@ -12,7 +10,7 @@ namespace dnSvc
 
     public abstract class DnTransport
     {
-        public Uri FromUri;
+        protected Uri FromUri;
 
         protected DnTransport(Uri fromUri)
         {

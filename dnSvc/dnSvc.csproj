@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpCifs.Std" Version="0.2.13" />
+    <ProjectReference Include="..\SharpCifs.Std\SharpCifs.STD1.3\SharpCifs.STD1.3.csproj" />
   </ItemGroup>
 
 

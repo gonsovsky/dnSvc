@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace dnSvc
 {
@@ -15,18 +16,31 @@ namespace dnSvc
 
         public ObservableCollection<DnTask> Tasks { get; set; }
 
-        private IEnumerable<DnItem> UnstartedTasksAndSegments =>
-            Tasks
-                .Where(task => task.Done == false && task.Busy == false)
-                .OfType<DnItem>()
-                .Union(
+        private IEnumerable<DnItem> ToWorkAll =>
+            Tasks.OfType<DnItem>()
+                .Where(task => task.Done == false && task.Busy == false && task.Retries == 0)
+                .OrderBy(x => Guid.NewGuid())
+                .Union
+                (
                     Tasks
+                        .Where(task => task.Done == true && task.Busy == false && 
+                                       (task.Retries==0 || task.RedPercent == 0) )
+
                         .SelectMany(task => task.Segments)
-                        .Where(segment => segment.Done == false && segment.Busy == false).OrderBy(x => Guid.NewGuid())
-                ).Take(DnConf.Parallels);
+                        .Where(segment => segment.Done == false && segment.Busy == false)
+                        .OrderBy(x => Guid.NewGuid())
+                )
+                .Union
+                (
+                    Tasks
+                        .Where(task => task.Done == false && task.Busy == false && task.Retries != 0)
+                        .OrderBy(x => Guid.NewGuid())
+                );
+
+        private IEnumerable<DnItem> ToWork => ToWorkAll.Take(DnConf.Parallels);
 
         private IEnumerable<DnTask> CompletedTasks =>
-            Tasks.Where(x => x.Segments.Count > 0 && !x.Segments.Exists(y => y.Done == false));
+            Tasks.Where( x => x.Done && x.Segments.Count > 0 && !x.Segments.Exists(y => y.Done == false));
 
         public int Percent
         {
@@ -39,13 +53,13 @@ namespace dnSvc
             }
         }
 
-        private object _locker;
+        private readonly object _locker;
 
         private CancellationToken _token;
 
         private CancellationTokenSource _tokenSource;
 
-        private ManualResetEvent _signalEvent;
+        private readonly ManualResetEvent _signalEvent;
 
         private Thread _thread;
 
@@ -60,7 +74,13 @@ namespace dnSvc
         {
             while (!this._token.IsCancellationRequested)
             {
-                var e = UnstartedTasksAndSegments.ToList();
+                foreach (var t in Tasks.Where(x => x.Retries > 0))
+                {
+                    if (t.RedPercent == 0)
+                        t.Retries = 0;
+                }
+
+                var e = ToWork.ToList();
                 if (e.Any())
                 {
                     if (DnConf.Parallels==1)
@@ -84,7 +104,7 @@ namespace dnSvc
                     task.Delivered = true;
                 }
 
-                if (Tasks.Count() == Tasks.Count(x=> x.Delivered==true))
+                if (Tasks.Count() == Tasks.Count(x=> x.Delivered))
                 {
                     return;
                 }
@@ -114,6 +134,12 @@ namespace dnSvc
                 Thread.Sleep(DnConf.Delay);
             }
             Console.WriteLine("DownloadService.ThreadBody exit");
+        }
+
+        #region live commands
+        public void Resume()
+        {
+            Start();
         }
 
         public void Start()
@@ -161,13 +187,39 @@ namespace dnSvc
                 BeginDownload(new Uri(line.Trim()));
             }
         }
+        #endregion
 
-        static DownloadService()
+        #region state commands
+
+        public void Save()
         {
-            ServicePointManager.Expect100Continue = false;
-            ServicePointManager.DefaultConnectionLimit = 100;
-            ServicePointManager.MaxServicePointIdleTime = 1000;
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            XmlSerializer formatter = new XmlSerializer(GetType());
+            var fs = new FileStream(DnConf.StateFile, FileMode.Create);
+            formatter.Serialize(fs, this);
+            fs.Close();
         }
+
+        public static DownloadService Load()
+        {
+            if (File.Exists(DnConf.StateFile) == false)
+                return new DownloadService();
+            XmlSerializer formatter = new XmlSerializer(typeof(DownloadService));
+            var fs = new FileStream(DnConf.StateFile, FileMode.Open);
+            var result = (DownloadService)formatter.Deserialize(fs);
+            fs.Close();
+            foreach (var x in result.Tasks)
+            {
+                x.Transport = DnTransport.Make(x.FromUri);
+                x.Name = x.FromUri.Segments.Last();
+                x.Segments.ForEach(y =>
+                {
+                    y.Parent = x;
+                    y.Transport = DnTransport.Make(x.FromUri);
+                });
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

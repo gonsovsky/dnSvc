@@ -1,22 +1,17 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace dnSvc
 {
     public abstract class DnItem
     {
-        public Uri FromUri { get; set; }
 
-        public DnTransport Transport;
-
+        [XmlIgnore]
         public CancellationToken Token;
-
-        public string Name { get; set; }
-
-        public Guid Id { get; set; }
 
         public int Size { get; set; } = 0;
 
@@ -32,28 +27,87 @@ namespace dnSvc
 
         public int Index { get; set; }
 
+        private int _retries;
+        private DateTime _retryTill;
+        [XmlIgnore]
+        public int Retries
+        {
+            get
+            {
+                if (this.GetType() == typeof(DnSegment))
+                    return ((DnSegment)(this)).Parent.Retries;
+                return _retries;
+            }
+            set
+            {
+                if (this.GetType() == typeof(DnSegment))
+                    ((DnSegment) (this)).Parent.Retries = value;
+                else
+                {
+                    if (value > 0)
+                        _retryTill=DateTime.Now.AddSeconds(10);
+                    _retries = value;
+                }
+            }
+        }
+
+        public int RedPercent
+        {
+            get
+            {
+                if (Retries == 0)
+                    return 0;
+                var diff = _retryTill.Subtract(DateTime.Now);
+                var secs = Math.Max(0,(int)diff.TotalSeconds);
+                if (secs == 0)
+                    return 0;
+                else return secs * 100 / 10;
+            }
+        }
+
+
+
+        [XmlIgnore]
+        public DnTransport Transport;
+
         protected DnItem(CancellationToken token, Uri fromUri)
         {
             Token = token;
-            FromUri = fromUri;
-            Name = fromUri.Segments.Last();
-            Transport = DnTransport.Make(FromUri);
+            Transport = DnTransport.Make(fromUri);
+        }
+
+        protected DnItem()
+        {
+
         }
 
         public void Start()
         {
+            var ok = false;
             Busy = true;
             TimeStarted = DateTime.Now;
             try
             {
                 if (File.Exists(FileName))
                     File.Delete(FileName);
-                StartAction();
+                try
+                {
+                    StartAction();
+                    ok = true;
+                }
+                catch (Exception e)
+                {
+                    Retries += 1;
+                }
             }
             finally
             {
+                if (ok)
+                {
+                    Retries = 0;
+                    Done = true;
+                }
                 Busy = false;
-                Done = true;
             }
             TimeEnded = DateTime.Now;
             TimeTaken = TimeStarted.Subtract(TimeEnded);

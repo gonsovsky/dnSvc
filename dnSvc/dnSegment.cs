@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Net;
+﻿using System.IO;
 using System.Xml.Serialization;
 
 namespace dnSvc
 {
     public class DnSegment: DnItem
     {
-        public  DnTask Parent;
+        [XmlIgnore]
+        public DnTask Parent;
 
         public int Begin { get; set; }
 
@@ -23,6 +22,9 @@ namespace dnSvc
             Parent = task;
             Index = index;
         }
+
+        public DnSegment()
+        {}
 
         protected override void StartAction()
         {

@@ -1,17 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 
 namespace dnSvc
 {
     public class DnTransportHttp: DnTransport
     {
+        static DnTransportHttp()
+        {
+            ServicePointManager.Expect100Continue = false;
+            ServicePointManager.DefaultConnectionLimit = 100;
+            ServicePointManager.MaxServicePointIdleTime = 1000;
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        }
+
         public DnTransportHttp(Uri fromUri) : base(fromUri)
         {
         }
-
 
         public override DnHead Head()
         {
@@ -31,6 +36,7 @@ namespace dnSvc
             httpWebRequest.Method = "GET";
             httpWebRequest.AddRange(begin, end);
             var httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse;
+            if (httpWebResponse == null) return;
             var stream = httpWebResponse.GetResponseStream();
             stream?.CopyTo(target);
         }

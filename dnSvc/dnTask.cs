@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace dnSvc
 {
@@ -29,7 +29,13 @@ namespace dnSvc
 
         public DnTask(CancellationToken token, Uri fromUri): base(token, fromUri)
         {
-       
+            FromUri = fromUri;
+            Name = fromUri.Segments.Last();
+        }
+
+        protected DnTask()
+        {
+
         }
 
         protected override void StartAction()
@@ -75,18 +81,22 @@ namespace dnSvc
             }
         }
 
+        public string Name { get; set; }
+
+        [XmlIgnore]
+        public Uri FromUri { get; set; }
+
+        public string Scheme => FromUri.Scheme;
+
+        [XmlElement("FromUri")]
+        public string FromUriX
+        {
+            get => FromUri.ToString();
+            set => FromUri = new Uri(value);
+        }
+
         public override string FileName =>
             Path.Combine(DownloadService.DnConf.Dir, Name);
-
-        public string Status
-        {
-            get
-            {
-                if (Busy)
-                    return "downloading...";
-                return Done ? "done" : "idle";
-            }
-        }
 
         public int Percent
         {
@@ -104,13 +114,11 @@ namespace dnSvc
             {
                 double v = 0;
                 var last = DoneSegmentsCol.Skip(Math.Max(0, DoneSegmentsCol.Count() - 2)).ToArray();
-                if (last.Count() >= 1)
-                {
-                    var s = last.Last().TimeEnded.Subtract(last.First().TimeStarted).TotalSeconds;
-                    v = last.Sum(x => x.Size);  
-                    if (s != 0)
-                        v = (double) v / s / 1024;
-                }
+                if (!last.Any()) return $"{Math.Round(v, 2)} kb/s";
+                var s = last.Last().TimeEnded.Subtract(last.First().TimeStarted).TotalSeconds;
+                v = last.Sum(x => x.Size);  
+                if (s != 0)
+                    v = v / s / 1024;
                 return $"{Math.Round(v, 2)} kb/s";
             }
         }
@@ -119,13 +127,10 @@ namespace dnSvc
         {
             get
             {
-                if (DoneSegmentsCol.Any())
-                {
-                    var x = DoneSegmentsCol.Last().TimeEnded;
-                    return (int)x.Subtract(TimeStarted).TotalSeconds;
-                }
+                if (!DoneSegmentsCol.Any()) return 0;
+                var x = DoneSegmentsCol.Last().TimeEnded;
+                return (int)x.Subtract(TimeStarted).TotalSeconds;
 
-                return 0;
             }
         }
     }

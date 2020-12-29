@@ -1,9 +1,12 @@
 C:\@trottle\DownloadService\dnSvc\bin\Debug\netstandard2.0\dnSvc.deps.json
 C:\@trottle\DownloadService\dnSvc\bin\Debug\netstandard2.0\dnSvc.dll
 C:\@trottle\DownloadService\dnSvc\bin\Debug\netstandard2.0\dnSvc.pdb
+C:\@trottle\DownloadService\dnSvc\bin\Debug\netstandard2.0\SharpCifs.Std.dll
+C:\@trottle\DownloadService\dnSvc\bin\Debug\netstandard2.0\SharpCifs.Std.pdb
+C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.csprojAssemblyReference.cache
 C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.csproj.CoreCompileInputs.cache
 C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.AssemblyInfoInputs.cache
 C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.AssemblyInfo.cs
+C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.csproj.CopyComplete
 C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.dll
 C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.pdb
-C:\@trottle\DownloadService\dnSvc\obj\Debug\netstandard2.0\dnSvc.csprojAssemblyReference.cache
